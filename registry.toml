@@ -17,3 +17,14 @@
 # sha256 = "0000000000000000000000000000000000000000000000000000000000000000"
 # capabilities = ["oj_source"]
 # has_ui = false
+
+[[plugin]]
+id = "codesnap"
+name = "CodeSnap 代码截图"
+version = "0.1.0"
+description = "以原版 CodeSnap 风格生成高清代码截图，支持多配色主题、渐变/透明背景与一键复制 PNG"
+repo = "https://github.com/lihaoze123/xcpc-plugin-codesnap"
+download_url = "https://github.com/lihaoze123/xcpc-plugin-codesnap/releases/download/v0.1.0/codesnap-0.1.0.zip"
+sha256 = "0ae5da2e74313dec0578fc8f49e0facba3a77c38582951d7b66712721a8b4639"
+capabilities = ["tool", "commands"]
+has_ui = true
