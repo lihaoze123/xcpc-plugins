@@ -4,11 +4,14 @@ import type {
   PluginCommandAction,
   ToolExecutionResult,
 } from "@xcpc/plugin-sdk/host";
-
-interface PlacedNode extends GraphNode {
-  x: number;
-  y: number;
-}
+import { parseGraphText } from "./parser";
+import {
+  applyBipartiteLayout,
+  applyCircleLayout,
+  applyTreeLayout,
+  placeInitialNodes,
+} from "./physics";
+import type { GraphFormat, GraphMode, NodeItem } from "./types";
 
 function escapeXml(str: string): string {
   return String(str)
@@ -19,302 +22,32 @@ function escapeXml(str: string): string {
     .replace(/'/g, "&apos;");
 }
 
-function parseGraphText(
-  format: string,
-  text: string,
-  opts: Record<string, unknown>,
-) {
-  const oneIndexed = opts.one_indexed !== false;
-  const directed = Boolean(opts.directed);
-  let weighted = Boolean(opts.weighted);
-
-  const lines = String(text || "")
-    .split(/\r?\n/)
-    .map((l) => l.trim())
-    .filter((l) => l.length > 0 && !l.startsWith("#") && !l.startsWith("//"));
-
-  const nodeMap = new Map<string, GraphNode>();
-  const edges: GraphEdge[] = [];
-
-  function ensureNode(id: string, extra?: { x?: number; y?: number; color?: string }) {
-    const key = String(id);
-    if (!nodeMap.has(key)) {
-      nodeMap.set(key, {
-        id: key,
-        label: key,
-        x: extra?.x,
-        y: extra?.y,
-        color: extra?.color,
-      });
-    } else if (extra) {
-      const existing = nodeMap.get(key)!;
-      if (extra.x != null) existing.x = extra.x;
-      if (extra.y != null) existing.y = extra.y;
-      if (extra.color) existing.color = extra.color;
-    }
-    return nodeMap.get(key)!;
+function fitToBox(nodes: NodeItem[], width: number, height: number, pad = 48): void {
+  if (nodes.length === 0) return;
+  let minX = Infinity,
+    maxX = -Infinity,
+    minY = Infinity,
+    maxY = -Infinity;
+  for (const nd of nodes) {
+    if (nd.x < minX) minX = nd.x;
+    if (nd.x > maxX) maxX = nd.x;
+    if (nd.y < minY) minY = nd.y;
+    if (nd.y > maxY) maxY = nd.y;
   }
-
-  if (format === "parent_array") {
-    const tokens = lines.join(" ").split(/[\s,]+/).filter(Boolean);
-    const startIdx = oneIndexed ? 1 : 0;
-    if (tokens.length > 0) {
-      const firstVal = Number(tokens[0]);
-      const hasRootSentinel = firstVal === 0 || firstVal === -1 || (!oneIndexed && firstVal < 0);
-      if (hasRootSentinel) {
-        for (let i = 0; i < tokens.length; i++) {
-          const u = String(startIdx + i);
-          ensureNode(u);
-          const p = tokens[i];
-          if (Number(p) >= startIdx) {
-            ensureNode(p);
-            edges.push({ from: String(p), to: u, directed });
-          }
-        }
-      } else {
-        ensureNode(String(startIdx));
-        for (let i = 0; i < tokens.length; i++) {
-          const u = String(startIdx + i + 1);
-          const p = String(tokens[i]);
-          ensureNode(p);
-          ensureNode(u);
-          edges.push({ from: p, to: u, directed });
-        }
-      }
-    }
-  } else if (format === "adj_list") {
-    for (const line of lines) {
-      const colon = line.indexOf(":");
-      if (colon < 0) {
-        const parts = line.split(/\s+/).filter(Boolean);
-        if (parts.length >= 1) {
-          const u = parts[0];
-          ensureNode(u);
-          for (let i = 1; i < parts.length; i++) {
-            const m = parts[i].match(/^([^()]+)(?:\(([^)]+)\))?$/);
-            if (m) {
-              const v = m[1];
-              const w = m[2] ?? undefined;
-              if (w != null) weighted = true;
-              ensureNode(v);
-              edges.push({ from: u, to: v, weight: w, label: w, directed });
-            }
-          }
-        }
-        continue;
-      }
-      const u = line.slice(0, colon).trim();
-      if (!u) continue;
-      ensureNode(u);
-      const rhs = line.slice(colon + 1).trim();
-      if (!rhs) continue;
-      for (const item of rhs.split(/[\s,]+/).filter(Boolean)) {
-        const m = item.match(/^([^()]+)(?:\(([^)]+)\))?$/);
-        if (m) {
-          const v = m[1];
-          const w = m[2] ?? undefined;
-          if (w != null) weighted = true;
-          ensureNode(v);
-          edges.push({ from: u, to: v, weight: w, label: w, directed });
-        }
-      }
-    }
-  } else if (format === "coords") {
-    let autoId = oneIndexed ? 1 : 0;
-    for (const line of lines) {
-      const parts = line.split(/[\s,]+/).filter(Boolean);
-      if (parts[0] === "e" || parts[0] === "edge") {
-        if (parts.length >= 3) {
-          const u = parts[1];
-          const v = parts[2];
-          const w = parts.length >= 4 ? parts[3] : undefined;
-          if (w != null) weighted = true;
-          ensureNode(u);
-          ensureNode(v);
-          edges.push({ from: u, to: v, weight: w, label: w, directed });
-        }
-        continue;
-      }
-      if (parts.length >= 3 && Number.isFinite(Number(parts[1])) && Number.isFinite(Number(parts[2]))) {
-        ensureNode(parts[0], { x: Number(parts[1]), y: Number(parts[2]) });
-      } else if (parts.length === 2 && Number.isFinite(Number(parts[0])) && Number.isFinite(Number(parts[1]))) {
-        ensureNode(String(autoId++), { x: Number(parts[0]), y: Number(parts[1]) });
-      }
-    }
-  } else {
-    for (const line of lines) {
-      const parts = line.split(/[\s,]+/).filter(Boolean);
-      if (parts.length === 1) {
-        ensureNode(parts[0]);
-      } else if (parts.length >= 2) {
-        const u = parts[0];
-        const v = parts[1];
-        const w = parts.length >= 3 ? parts[2] : undefined;
-        if (w != null) weighted = true;
-        ensureNode(u);
-        ensureNode(v);
-        edges.push({ from: u, to: v, weight: w, label: w, directed });
-      }
-    }
+  const spanX = Math.max(1e-6, maxX - minX);
+  const spanY = Math.max(1e-6, maxY - minY);
+  const scale = Math.min((width - 2 * pad) / spanX, (height - 2 * pad) / spanY);
+  const cx = (minX + maxX) / 2;
+  const cy = (minY + maxY) / 2;
+  for (const nd of nodes) {
+    nd.x = width / 2 + (nd.x - cx) * (Number.isFinite(scale) ? scale : 1);
+    nd.y = height / 2 + (nd.y - cy) * (Number.isFinite(scale) ? scale : 1);
   }
-
-  return {
-    nodes: [...nodeMap.values()],
-    edges,
-    directed,
-    weighted,
-    one_indexed: oneIndexed,
-  };
 }
 
-function layoutGraph(
-  graph: { nodes: GraphNode[]; edges: GraphEdge[] },
-  layout: string,
-  width: number,
-  height: number,
-): PlacedNode[] {
-  const nodes: PlacedNode[] = graph.nodes.map((n) => ({
-    ...n,
-    x: n.x ?? 0,
-    y: n.y ?? 0,
-  }));
-  const n = nodes.length;
-  if (n === 0) return nodes;
-
-  const pad = 48;
-  const cx = width / 2;
-  const cy = height / 2;
-  const radius = Math.max(40, Math.min(width, height) / 2 - pad);
-
-  if (layout === "coords" && graph.nodes.some((nd) => nd.x != null && nd.y != null)) {
-    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-    for (const nd of graph.nodes) {
-      if (nd.x != null && nd.y != null) {
-        minX = Math.min(minX, nd.x);
-        maxX = Math.max(maxX, nd.x);
-        minY = Math.min(minY, nd.y);
-        maxY = Math.max(maxY, nd.y);
-      }
-    }
-    const spanX = Math.max(1e-6, maxX - minX);
-    const spanY = Math.max(1e-6, maxY - minY);
-    for (let i = 0; i < n; i++) {
-      const orig = graph.nodes[i];
-      if (orig.x == null || orig.y == null) {
-        const a = (2 * Math.PI * i) / n;
-        nodes[i].x = cx + radius * Math.cos(a);
-        nodes[i].y = cy + radius * Math.sin(a);
-      } else {
-        nodes[i].x = pad + ((orig.x - minX) / spanX) * (width - 2 * pad);
-        nodes[i].y = height - pad - ((orig.y - minY) / spanY) * (height - 2 * pad);
-      }
-    }
-    return nodes;
-  }
-
-  if (layout === "tree") {
-    const adj = new Map<string, string[]>();
-    for (const nd of nodes) adj.set(nd.id, []);
-    for (const e of graph.edges) {
-      adj.get(e.from)?.push(e.to);
-      adj.get(e.to)?.push(e.from);
-    }
-    const depth = new Map<string, number>();
-    const levels: string[][] = [];
-    for (const start of nodes) {
-      if (depth.has(start.id)) continue;
-      const q = [start.id];
-      depth.set(start.id, 0);
-      while (q.length > 0) {
-        const u = q.shift()!;
-        const d = depth.get(u)!;
-        if (!levels[d]) levels[d] = [];
-        levels[d].push(u);
-        for (const v of adj.get(u) ?? []) {
-          if (!depth.has(v)) {
-            depth.set(v, d + 1);
-            q.push(v);
-          }
-        }
-      }
-    }
-    const pos = new Map<string, { x: number; y: number }>();
-    const maxLevel = Math.max(1, levels.length - 1);
-    for (let d = 0; d < levels.length; d++) {
-      const row = levels[d];
-      const y = levels.length === 1 ? cy : pad + (d / maxLevel) * (height - 2 * pad);
-      for (let i = 0; i < row.length; i++) {
-        const x = row.length === 1 ? cx : pad + ((i + 0.5) / row.length) * (width - 2 * pad);
-        pos.set(row[i], { x, y });
-      }
-    }
-    for (const nd of nodes) {
-      const p = pos.get(nd.id) ?? { x: cx, y: cy };
-      nd.x = p.x;
-      nd.y = p.y;
-    }
-    return nodes;
-  }
-
-  for (let i = 0; i < n; i++) {
-    const angle = (2 * Math.PI * i) / n - Math.PI / 2;
-    nodes[i].x = cx + radius * Math.cos(angle);
-    nodes[i].y = cy + radius * Math.sin(angle);
-  }
-  if (layout === "circle" || n <= 2) return nodes;
-
-  const idxMap = new Map<string, number>();
-  nodes.forEach((nd, i) => idxMap.set(nd.id, i));
-  const area = (width - 2 * pad) * (height - 2 * pad);
-  const k = Math.sqrt(area / Math.max(1, n));
-  let temp = Math.min(width, height) / 6;
-
-  for (let iter = 0; iter < 60; iter++) {
-    const dx = new Array<number>(n).fill(0);
-    const dy = new Array<number>(n).fill(0);
-    for (let i = 0; i < n; i++) {
-      for (let j = i + 1; j < n; j++) {
-        const vx = nodes[i].x - nodes[j].x;
-        const vy = nodes[i].y - nodes[j].y;
-        const dist = Math.hypot(vx, vy) || 0.01;
-        const rep = (k * k) / dist;
-        const fx = (vx / dist) * rep;
-        const fy = (vy / dist) * rep;
-        dx[i] += fx;
-        dy[i] += fy;
-        dx[j] -= fx;
-        dy[j] -= fy;
-      }
-    }
-    for (const e of graph.edges) {
-      const u = idxMap.get(e.from);
-      const v = idxMap.get(e.to);
-      if (u == null || v == null || u === v) continue;
-      const vx = nodes[u].x - nodes[v].x;
-      const vy = nodes[u].y - nodes[v].y;
-      const dist = Math.hypot(vx, vy) || 0.01;
-      const attr = (dist * dist) / k;
-      const fx = (vx / dist) * attr;
-      const fy = (vy / dist) * attr;
-      dx[u] -= fx;
-      dy[u] -= fy;
-      dx[v] += fx;
-      dy[v] += fy;
-    }
-    for (let i = 0; i < n; i++) {
-      const disp = Math.hypot(dx[i], dy[i]) || 0.01;
-      const step = Math.min(disp, temp);
-      nodes[i].x = Math.max(pad, Math.min(width - pad, nodes[i].x + (dx[i] / disp) * step));
-      nodes[i].y = Math.max(pad, Math.min(height - pad, nodes[i].y + (dy[i] / disp) * step));
-    }
-    temp *= 0.94;
-  }
-  return nodes;
-}
-
-function renderGraphSvg(
-  nodes: PlacedNode[],
-  edges: GraphEdge[],
+function renderHeadlessSvg(
+  nodes: NodeItem[],
+  edges: Array<{ id: string; from: string; to: string; weight: string | null }>,
   directed: boolean,
   width: number,
   height: number,
@@ -325,32 +58,98 @@ function renderGraphSvg(
     `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">`,
     '<rect width="100%" height="100%" fill="#ffffff" rx="8"/>',
   ];
-  if (directed) {
-    parts.push(
-      '<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1 L 10 5 L 0 9 z" fill="#475569"/></marker></defs>',
-    );
+
+  // Group multiedges & self-loops
+  const pairGroups = new Map<string, typeof edges>();
+  const loopGroups = new Map<string, typeof edges>();
+  for (const e of edges) {
+    if (e.from === e.to) {
+      if (!loopGroups.has(e.from)) loopGroups.set(e.from, []);
+      loopGroups.get(e.from)!.push(e);
+    } else {
+      const key = e.from < e.to ? `${e.from}\0${e.to}` : `${e.to}\0${e.from}`;
+      if (!pairGroups.has(key)) pairGroups.set(key, []);
+      pairGroups.get(key)!.push(e);
+    }
   }
+
   for (const e of edges) {
     const u = byId.get(e.from);
     const v = byId.get(e.to);
     if (!u || !v) continue;
+
+    if (e.from === e.to) {
+      const idx = (loopGroups.get(e.from) ?? [e]).indexOf(e);
+      const base = -Math.PI / 2 + idx * 0.85;
+      const a1 = base - 0.44;
+      const a2 = base + 0.44;
+      const reach = r * 2.55 + idx * 12;
+      const sx = u.x + Math.cos(a1) * r;
+      const sy = u.y + Math.sin(a1) * r;
+      const tx = u.x + Math.cos(a2) * (directed ? r + 2 : r);
+      const ty = u.y + Math.sin(a2) * (directed ? r + 2 : r);
+      const c1x = u.x + Math.cos(a1 - 0.35) * reach;
+      const c1y = u.y + Math.sin(a1 - 0.35) * reach;
+      const c2x = u.x + Math.cos(a2 + 0.35) * reach;
+      const c2y = u.y + Math.sin(a2 + 0.35) * reach;
+      parts.push(
+        `<path d="M ${sx.toFixed(1)} ${sy.toFixed(1)} C ${c1x.toFixed(1)} ${c1y.toFixed(1)}, ${c2x.toFixed(1)} ${c2y.toFixed(1)}, ${tx.toFixed(1)} ${ty.toFixed(1)}" fill="none" stroke="#475569" stroke-width="2"/>`,
+      );
+      if (e.weight) {
+        const lx = 0.125 * sx + 0.375 * c1x + 0.375 * c2x + 0.125 * tx;
+        const ly = 0.125 * sy + 0.375 * c1y + 0.375 * c2y + 0.125 * ty;
+        parts.push(
+          `<text x="${lx.toFixed(1)}" y="${(ly - 4).toFixed(1)}" text-anchor="middle" font-family="monospace" font-size="12" fill="#0f172a">${escapeXml(e.weight)}</text>`,
+        );
+      }
+      continue;
+    }
+
+    const key = e.from < e.to ? `${e.from}\0${e.to}` : `${e.to}\0${e.from}`;
+    const group = pairGroups.get(key) ?? [e];
+    const idx = group.indexOf(e);
+    const count = group.length;
     const dx = v.x - u.x;
     const dy = v.y - u.y;
     const dist = Math.hypot(dx, dy) || 1;
-    const x1 = u.x + (dx / dist) * r;
-    const y1 = u.y + (dy / dist) * r;
-    const x2 = v.x - (dx / dist) * (directed ? r + 4 : r);
-    const y2 = v.y - (dy / dist) * (directed ? r + 4 : r);
+    const canonSign = e.from < e.to ? 1 : -1;
+    const nx = (-dy / dist) * canonSign;
+    const ny = (dx / dist) * canonSign;
+    const offset = count === 1 ? 0 : (idx - (count - 1) / 2) * 30;
+    const cx = (u.x + v.x) / 2 + nx * offset;
+    const cy = (u.y + v.y) / 2 + ny * offset;
+
+    const sDist = Math.hypot(cx - u.x, cy - u.y) || 1;
+    const sx = u.x + ((cx - u.x) / sDist) * r;
+    const sy = u.y + ((cy - u.y) / sDist) * r;
+    const tDist = Math.hypot(v.x - cx, v.y - cy) || 1;
+    const trim = directed ? r + 3 : r;
+    const tx = v.x - ((v.x - cx) / tDist) * trim;
+    const ty = v.y - ((v.y - cy) / tDist) * trim;
+
     parts.push(
-      `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="#475569" stroke-width="2"${directed ? ' marker-end="url(#arrow)"' : ""}/>`,
+      `<path d="M ${sx.toFixed(1)} ${sy.toFixed(1)} Q ${cx.toFixed(1)} ${cy.toFixed(1)}, ${tx.toFixed(1)} ${ty.toFixed(1)}" fill="none" stroke="#475569" stroke-width="2"/>`,
     );
-    const lbl = e.weight ?? e.label;
-    if (lbl != null && String(lbl).length > 0) {
+    if (directed) {
+      const ang = Math.atan2(ty - cy, tx - cx);
+      const hl = 9;
+      const ax = tx - hl * Math.cos(ang - Math.PI / 6.5);
+      const ay = ty - hl * Math.sin(ang - Math.PI / 6.5);
+      const bx = tx - hl * Math.cos(ang + Math.PI / 6.5);
+      const by = ty - hl * Math.sin(ang + Math.PI / 6.5);
       parts.push(
-        `<text x="${((x1 + x2) / 2).toFixed(1)}" y="${((y1 + y2) / 2 - 6).toFixed(1)}" text-anchor="middle" font-family="monospace" font-size="12" fill="#0f172a">${escapeXml(lbl)}</text>`,
+        `<polygon points="${tx.toFixed(1)},${ty.toFixed(1)} ${ax.toFixed(1)},${ay.toFixed(1)} ${bx.toFixed(1)},${by.toFixed(1)}" fill="#475569"/>`,
+      );
+    }
+    if (e.weight) {
+      const lx = 0.25 * sx + 0.5 * cx + 0.25 * tx;
+      const ly = 0.25 * sy + 0.5 * cy + 0.25 * ty;
+      parts.push(
+        `<text x="${lx.toFixed(1)}" y="${(ly - 6).toFixed(1)}" text-anchor="middle" font-family="monospace" font-size="12" fill="#0f172a">${escapeXml(e.weight)}</text>`,
       );
     }
   }
+
   for (const nd of nodes) {
     const fill = nd.color || "#eef2ff";
     parts.push(
@@ -371,29 +170,79 @@ export function runTool(
   if (toolId !== "parse-graph") {
     throw new Error(`Unknown tool: ${toolId}`);
   }
-  const format = String(inputs?.format ?? "edge_list");
+  const format = String(inputs?.format ?? "edge_list") as GraphFormat;
   const text = String(inputs?.text ?? "");
+  const oneIndexed = inputs?.one_indexed !== false;
+  const directed = Boolean(inputs?.directed);
   const layout = String(inputs?.layout ?? (format === "coords" ? "coords" : "force"));
   const width = 640;
   const height = 420;
 
-  const parsed = parseGraphText(format, text, inputs ?? {});
-  const placedNodes = layoutGraph(parsed, layout, width, height);
-  const svg = renderGraphSvg(placedNodes, parsed.edges, parsed.directed, width, height);
+  const parsed = parseGraphText(format, text, {
+    oneIndexed,
+    directed,
+    multiedge: true,
+    headerNmMode: "auto",
+  });
+
+  const mode: GraphMode =
+    layout === "tree"
+      ? "tree"
+      : layout === "bipartite"
+        ? "bipartite"
+        : layout === "coords"
+          ? "geometry"
+          : "normal";
+
+  const placed = placeInitialNodes(parsed.nodes, parsed.edges, mode, null);
+  if (layout === "circle") {
+    applyCircleLayout(placed);
+  } else if (layout === "tree") {
+    applyTreeLayout(placed, parsed.edges, null);
+  } else if (layout === "bipartite") {
+    applyBipartiteLayout(placed, parsed.edges);
+  }
+  fitToBox(placed, width, height);
+
+  const svg = renderHeadlessSvg(placed, parsed.edges, directed, width, height);
+  const weighted = Boolean(inputs?.weighted) || parsed.edges.some((e) => e.weight != null);
+  const outNodes: GraphNode[] = placed.map((n) => ({
+    id: n.id,
+    label: n.label,
+    x: n.x,
+    y: n.y,
+    color: n.color ?? undefined,
+  }));
+  const outEdges: GraphEdge[] = parsed.edges.map((e) => ({
+    from: e.from,
+    to: e.to,
+    weight: e.weight ?? undefined,
+    label: e.weight ?? undefined,
+    directed,
+  }));
+
   const layoutLabel =
-    layout === "tree" ? "树" : layout === "circle" ? "圆形" : layout === "coords" ? "按坐标" : "力导向";
+    layout === "tree"
+      ? "树"
+      : layout === "bipartite"
+        ? "二分图"
+        : layout === "circle"
+          ? "圆形"
+          : layout === "coords"
+            ? "按坐标"
+            : "力导向";
 
   return {
-    summary: `已解析 ${placedNodes.length} 个节点、${parsed.edges.length} 条边（${parsed.directed ? "有向" : "无向"}，${layoutLabel}）`,
+    summary: `已解析 ${outNodes.length} 个节点、${outEdges.length} 条边（${directed ? "有向" : "无向"}，${layoutLabel}）`,
     blocks: [
       {
         type: "graph",
         title: "图结构",
-        directed: parsed.directed,
-        weighted: parsed.weighted,
-        one_indexed: parsed.one_indexed,
-        nodes: placedNodes,
-        edges: parsed.edges,
+        directed,
+        weighted,
+        one_indexed: oneIndexed,
+        nodes: outNodes,
+        edges: outEdges,
         layout,
       },
       {
