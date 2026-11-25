@@ -26,7 +26,7 @@
       "version": "1.0.0",
       "description": "画图、拖拽、导出图片",
       "download_url": "https://github.com/lihaoze123/xcpc-plugins/releases/download/official-latest/graph-editor-1.0.0.zip",
-      "sha256": "d4f001686f9bfa784177087b881e1665744d3616b706243317c5040a230f3527",
+      "sha256": "485804d3f36e0e487c57c18c458517a121057b4ea489fc33307507a591d8469e",
       "capabilities": [
         "tool",
         "commands"
@@ -46,7 +46,7 @@
       "version": "1.0.0",
       "description": "位运算、进制转换与常用数论工具",
       "download_url": "https://github.com/lihaoze123/xcpc-plugins/releases/download/official-latest/math-bitwise-1.0.0.zip",
-      "sha256": "591bec067476c6910fb8ca5eec8fe81b6beb6dcf98559e95679a9e6efe70f094",
+      "sha256": "95f459b9d1713b79d6572b273ecbaa6a6a184ad33e96a38508cc847825c75b33",
       "capabilities": [
         "tool",
         "commands"

@@ -5,7 +5,7 @@ version = "1.0.0"
 description = "位运算、进制转换与常用数论工具"
 author = "XCPC Workstation"
 entry = "index.js"
-ui_entry = "ui.js"
+ui_entry = "ui.html"
 capabilities = ["tool", "commands"]
 
 [permissions]

@@ -34,6 +34,8 @@ jobs:
 
       - name: Build xcpc CLI
         working-directory: xcpc-workstation
+        env:
+          XCPC_SKIP_EMBED_FONTS: "1"
         run: cargo build --release -p xcpc-mcp --bin xcpc
 
       - name: Install Node dependencies
@@ -77,7 +79,10 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         working-directory: xcpc-plugins
         run: |
-          gh release delete official-latest -y || true
-          gh release create official-latest dist-repo/*.zip dist-repo/index.json dist-repo/xcpc-plugin-sdk.tgz \
-            --title "Official Plugins (Latest)" \
-            --notes "Automated build of official XCPC Workstation tool plugins and @xcpc/plugin-sdk."
+          gh release view official-latest >/dev/null 2>&1 || \
+            gh release create official-latest \
+              --title "Official Plugins (Latest)" \
+              --notes "Automated build of official XCPC Workstation tool plugins."
+          gh release upload official-latest \
+            dist-repo/*.zip dist-repo/index.json dist-repo/xcpc-plugin-sdk.tgz \
+            --clobber

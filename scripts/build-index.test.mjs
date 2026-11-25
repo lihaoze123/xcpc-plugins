@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 
 import {
   parseRegistryToml,
+  parseSimpleToml,
   processRegistryEntry,
   validateHttpsUrl,
 } from "./build-index.mjs";
@@ -108,4 +109,46 @@ test("processRegistryEntry verifies, checks, and merges community plugin as offi
   assert.equal(merged.sha256, sha);
   assert.equal(merged.download_url, "https://example.com/complexity-mem-1.0.0.zip");
   assert.equal("has_unsandboxed_ui" in merged.permissions, false);
+});
+
+test("parseSimpleToml recognizes ui_entry = ui.html and official plugins use ui.html", () => {
+  const mathManifest = fs.readFileSync(
+    path.join(repoRoot, "plugins", "math-bitwise", "manifest.toml"),
+    "utf8",
+  );
+  const graphManifest = fs.readFileSync(
+    path.join(repoRoot, "plugins", "graph-editor", "manifest.toml"),
+    "utf8",
+  );
+  assert.equal(parseSimpleToml(mathManifest).ui_entry, "ui.html");
+  assert.equal(parseSimpleToml(graphManifest).ui_entry, "ui.html");
+});
+
+test("processRegistryEntry checks pure-Web ui.html plugin zip", async (t) => {
+  const xcpcBin = process.env.XCPC_BIN;
+  const sampleZip = path.join(repoRoot, "dist-repo", "math-bitwise-1.0.0.zip");
+  if (!xcpcBin || !fs.existsSync(xcpcBin) || !fs.existsSync(sampleZip)) {
+    t.skip("XCPC_BIN or dist-repo/math-bitwise-1.0.0.zip not available");
+    return;
+  }
+
+  const zipBuf = fs.readFileSync(sampleZip);
+  const sha = crypto.createHash("sha256").update(zipBuf).digest("hex");
+  const merged = await processRegistryEntry(
+    {
+      id: "math-bitwise",
+      version: "1.0.0",
+      download_url: "https://example.com/math-bitwise-1.0.0.zip",
+      sha256: sha,
+    },
+    {
+      xcpcBin,
+      fetchImpl: async () => new Response(zipBuf, { status: 200 }),
+    },
+  );
+
+  assert.equal(merged.id, "math-bitwise");
+  assert.equal(merged.has_ui, true);
+  assert.equal(merged.official, false);
+  assert.equal(merged.sha256, sha);
 });

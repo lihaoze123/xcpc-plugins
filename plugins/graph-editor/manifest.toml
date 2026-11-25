@@ -5,7 +5,7 @@ version = "1.0.0"
 description = "画图、拖拽、导出图片"
 author = "XCPC Workstation"
 entry = "index.js"
-ui_entry = "ui.js"
+ui_entry = "ui.html"
 capabilities = ["tool", "commands"]
 
 [permissions]
