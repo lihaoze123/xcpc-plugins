@@ -1,0 +1,76 @@
+name: Build & Publish Plugin Index
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout xcpc-plugins
+        uses: actions/checkout@v4
+        with:
+          path: xcpc-plugins
+
+      - name: Checkout xcpc-workstation (SDK & CLI)
+        uses: actions/checkout@v4
+        with:
+          repository: lihaoze123/xcpc-workstation
+          path: xcpc-workstation
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build xcpc CLI
+        working-directory: xcpc-workstation
+        run: cargo build --release -p xcpc-mcp --bin xcpc
+
+      - name: Install Node dependencies
+        working-directory: xcpc-plugins
+        run: |
+          node -e '
+            const fs = require("fs");
+            const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
+            pkg.devDependencies["@xcpc/plugin-sdk"] = "file:../xcpc-workstation/packages/plugin-sdk";
+            fs.writeFileSync("package.json", JSON.stringify(pkg, null, 2) + "\n");
+          '
+          npm install
+
+      - name: Typecheck official plugins
+        working-directory: xcpc-plugins
+        run: npm run typecheck
+
+      - name: Build, check, pack official plugins and generate index.json
+        working-directory: xcpc-plugins
+        env:
+          XCPC_BIN: ${{ github.workspace }}/xcpc-workstation/target/release/xcpc
+          BASE_URL: https://github.com/lihaoze123/xcpc-plugins/releases/download/official-latest
+        run: node scripts/build-index.mjs --write-root
+
+      - name: Upload built artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: plugin-dist-repo
+          path: xcpc-plugins/dist-repo/
+
+      - name: Publish rolling release on main
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        working-directory: xcpc-plugins
+        run: |
+          gh release delete official-latest -y || true
+          gh release create official-latest dist-repo/*.zip dist-repo/index.json \
+            --title "Official Plugins (Latest)" \
+            --notes "Automated build of official XCPC Workstation tool plugins."

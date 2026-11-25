@@ -1,0 +1,19 @@
+# Community Plugin Registry for XCPC Workstation
+#
+# Community authors submit a PR adding an entry below (metadata + locked version/SHA-256 only;
+# third-party source code is hosted in the author's own repository).
+# CI automatically downloads the `.zip`, verifies its SHA-256, and runs `xcpc plugin check`
+# before publishing to `index.json`.
+#
+# Example entry:
+#
+# [[plugin]]
+# id = "luogu-sync"
+# name = "Luogu Sync"
+# version = "0.1.0"
+# description = "Sync Luogu submissions and problem metadata."
+# repo = "https://github.com/example/xcpc-plugin-luogu"
+# download_url = "https://github.com/example/xcpc-plugin-luogu/releases/download/v0.1.0/luogu-sync-0.1.0.zip"
+# sha256 = "0000000000000000000000000000000000000000000000000000000000000000"
+# capabilities = ["oj_source"]
+# has_ui = false

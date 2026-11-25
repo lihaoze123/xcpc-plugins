@@ -1,0 +1,87 @@
+{
+  "name": "XCPC Official",
+  "plugins": [
+    {
+      "id": "complexity-mem",
+      "name": "复杂度与内存估算",
+      "version": "1.0.0",
+      "description": "估算算法时间复杂度与数组内存占用",
+      "download_url": "https://github.com/lihaoze123/xcpc-plugins/releases/latest/download/complexity-mem-1.0.0.zip",
+      "sha256": "479209393cd02fec50d9503948844a7edbfa5e213663a7b19c8aef0b3b61be1a",
+      "capabilities": [
+        "tool"
+      ],
+      "has_ui": false,
+      "official": true,
+      "permissions": {
+        "plugin_id": "complexity-mem",
+        "domains": [],
+        "credentials": [],
+        "workspace_read": false,
+        "has_unsandboxed_ui": false
+      }
+    },
+    {
+      "id": "graph-editor",
+      "name": "图论与几何画板",
+      "version": "1.0.0",
+      "description": "画图、拖拽、导出图片",
+      "download_url": "https://github.com/lihaoze123/xcpc-plugins/releases/latest/download/graph-editor-1.0.0.zip",
+      "sha256": "a7389bcbb820d26b87a2a4055271e34810cc66091434f96458e44a571512a8bc",
+      "capabilities": [
+        "tool",
+        "commands"
+      ],
+      "has_ui": true,
+      "official": true,
+      "permissions": {
+        "plugin_id": "graph-editor",
+        "domains": [],
+        "credentials": [],
+        "workspace_read": false,
+        "has_unsandboxed_ui": true
+      }
+    },
+    {
+      "id": "math-bitwise",
+      "name": "数论与位运算工作台",
+      "version": "1.0.0",
+      "description": "64 位进制翻转、数论计算与常用模数速查",
+      "download_url": "https://github.com/lihaoze123/xcpc-plugins/releases/latest/download/math-bitwise-1.0.0.zip",
+      "sha256": "97a258a55959dd08c9a8c8a5c33f65fd6061a623a96783894bf63993299b0dc2",
+      "capabilities": [
+        "tool",
+        "commands"
+      ],
+      "has_ui": true,
+      "official": true,
+      "permissions": {
+        "plugin_id": "math-bitwise",
+        "domains": [],
+        "credentials": [],
+        "workspace_read": false,
+        "has_unsandboxed_ui": true
+      }
+    },
+    {
+      "id": "string-lab",
+      "name": "字符串算法调试器",
+      "version": "1.0.0",
+      "description": "计算前缀函数、Z 函数、回文半径与后缀数组",
+      "download_url": "https://github.com/lihaoze123/xcpc-plugins/releases/latest/download/string-lab-1.0.0.zip",
+      "sha256": "19ccf93dd75ae74bb06721d1207942ab4ad93d5ac8a2e98811380191a5bfd780",
+      "capabilities": [
+        "tool"
+      ],
+      "has_ui": false,
+      "official": true,
+      "permissions": {
+        "plugin_id": "string-lab",
+        "domains": [],
+        "credentials": [],
+        "workspace_read": false,
+        "has_unsandboxed_ui": false
+      }
+    }
+  ]
+}
