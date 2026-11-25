@@ -2,7 +2,7 @@
 id = "complexity-mem"
 name = "复杂度与内存估算"
 version = "1.0.0"
-description = "估算算法时间复杂度与数组内存占用"
+description = "估算时间复杂度与数组内存占用"
 author = "XCPC Workstation"
 entry = "index.js"
 capabilities = ["tool"]

@@ -5,9 +5,9 @@
       "id": "complexity-mem",
       "name": "复杂度与内存估算",
       "version": "1.0.0",
-      "description": "估算算法时间复杂度与数组内存占用",
-      "download_url": "https://github.com/lihaoze123/xcpc-plugins/releases/latest/download/complexity-mem-1.0.0.zip",
-      "sha256": "479209393cd02fec50d9503948844a7edbfa5e213663a7b19c8aef0b3b61be1a",
+      "description": "估算时间复杂度与数组内存占用",
+      "download_url": "https://github.com/lihaoze123/xcpc-plugins/releases/download/official-latest/complexity-mem-1.0.0.zip",
+      "sha256": "024ead356797d883ca657999365a405a2ea4debf0aae5b0625b1f754a1d53755",
       "capabilities": [
         "tool"
       ],
@@ -17,8 +17,7 @@
         "plugin_id": "complexity-mem",
         "domains": [],
         "credentials": [],
-        "workspace_read": false,
-        "has_unsandboxed_ui": false
+        "workspace_read": false
       }
     },
     {
@@ -26,8 +25,8 @@
       "name": "图论与几何画板",
       "version": "1.0.0",
       "description": "画图、拖拽、导出图片",
-      "download_url": "https://github.com/lihaoze123/xcpc-plugins/releases/latest/download/graph-editor-1.0.0.zip",
-      "sha256": "a2d16b14895f1961af2b0f7ba3b484f5e0eb27984a08582885e6c8f77e08d26c",
+      "download_url": "https://github.com/lihaoze123/xcpc-plugins/releases/download/official-latest/graph-editor-1.0.0.zip",
+      "sha256": "d4f001686f9bfa784177087b881e1665744d3616b706243317c5040a230f3527",
       "capabilities": [
         "tool",
         "commands"
@@ -38,17 +37,16 @@
         "plugin_id": "graph-editor",
         "domains": [],
         "credentials": [],
-        "workspace_read": false,
-        "has_unsandboxed_ui": true
+        "workspace_read": false
       }
     },
     {
       "id": "math-bitwise",
       "name": "数论与位运算工作台",
       "version": "1.0.0",
-      "description": "64 位进制翻转、数论计算与常用模数速查",
-      "download_url": "https://github.com/lihaoze123/xcpc-plugins/releases/latest/download/math-bitwise-1.0.0.zip",
-      "sha256": "9e1a7456e1b783431553c549561333dc84be635e32a62f5d85162525e02a5275",
+      "description": "位运算、进制转换与常用数论工具",
+      "download_url": "https://github.com/lihaoze123/xcpc-plugins/releases/download/official-latest/math-bitwise-1.0.0.zip",
+      "sha256": "591bec067476c6910fb8ca5eec8fe81b6beb6dcf98559e95679a9e6efe70f094",
       "capabilities": [
         "tool",
         "commands"
@@ -59,17 +57,16 @@
         "plugin_id": "math-bitwise",
         "domains": [],
         "credentials": [],
-        "workspace_read": false,
-        "has_unsandboxed_ui": true
+        "workspace_read": false
       }
     },
     {
       "id": "string-lab",
       "name": "字符串算法调试器",
       "version": "1.0.0",
-      "description": "计算前缀函数、Z 函数、回文半径与后缀数组",
-      "download_url": "https://github.com/lihaoze123/xcpc-plugins/releases/latest/download/string-lab-1.0.0.zip",
-      "sha256": "19ccf93dd75ae74bb06721d1207942ab4ad93d5ac8a2e98811380191a5bfd780",
+      "description": "调试前缀函数、Z 函数与回文串算法",
+      "download_url": "https://github.com/lihaoze123/xcpc-plugins/releases/download/official-latest/string-lab-1.0.0.zip",
+      "sha256": "8a9cb52a732d359324241a1e66bd67cb1d4b82135e10d7d777dea43f6d64081b",
       "capabilities": [
         "tool"
       ],
@@ -79,8 +76,7 @@
         "plugin_id": "string-lab",
         "domains": [],
         "credentials": [],
-        "workspace_read": false,
-        "has_unsandboxed_ui": false
+        "workspace_read": false
       }
     }
   ]

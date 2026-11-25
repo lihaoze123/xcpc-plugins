@@ -58,6 +58,13 @@ jobs:
           BASE_URL: https://github.com/lihaoze123/xcpc-plugins/releases/download/official-latest
         run: node scripts/build-index.mjs --write-root
 
+      - name: Pack @xcpc/plugin-sdk tarball
+        working-directory: xcpc-workstation/packages/plugin-sdk
+        run: |
+          mkdir -p "${{ github.workspace }}/xcpc-plugins/dist-repo"
+          TARBALL=$(npm pack --silent --pack-destination "${{ github.workspace }}/xcpc-plugins/dist-repo" | tail -n 1)
+          mv "${{ github.workspace }}/xcpc-plugins/dist-repo/${TARBALL}" "${{ github.workspace }}/xcpc-plugins/dist-repo/xcpc-plugin-sdk.tgz"
+
       - name: Upload built artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -71,6 +78,6 @@ jobs:
         working-directory: xcpc-plugins
         run: |
           gh release delete official-latest -y || true
-          gh release create official-latest dist-repo/*.zip dist-repo/index.json \
+          gh release create official-latest dist-repo/*.zip dist-repo/index.json dist-repo/xcpc-plugin-sdk.tgz \
             --title "Official Plugins (Latest)" \
-            --notes "Automated build of official XCPC Workstation tool plugins."
+            --notes "Automated build of official XCPC Workstation tool plugins and @xcpc/plugin-sdk."

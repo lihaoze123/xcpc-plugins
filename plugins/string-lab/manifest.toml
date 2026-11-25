@@ -2,7 +2,7 @@
 id = "string-lab"
 name = "字符串算法调试器"
 version = "1.0.0"
-description = "计算前缀函数、Z 函数、回文半径与后缀数组"
+description = "调试前缀函数、Z 函数与回文串算法"
 author = "XCPC Workstation"
 entry = "index.js"
 capabilities = ["tool"]

@@ -2,7 +2,7 @@
 id = "math-bitwise"
 name = "数论与位运算工作台"
 version = "1.0.0"
-description = "64 位进制翻转、数论计算与常用模数速查"
+description = "位运算、进制转换与常用数论工具"
 author = "XCPC Workstation"
 entry = "index.js"
 ui_entry = "ui.js"

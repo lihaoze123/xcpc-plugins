@@ -143,6 +143,118 @@ function clampNodesToBounds(list: NodeItem[], w: number, hVal: number): NodeItem
   }));
 }
 
+function clampNodesToDragBounds(list: NodeItem[], w: number, hVal: number): NodeItem[] {
+  const pad = NODE_R + 4;
+  const minX = pad;
+  const maxX = Math.max(pad, w - pad);
+  const minY = pad;
+  const maxY = Math.max(pad, hVal - pad);
+  return list.map((nd) => ({
+    ...nd,
+    x: Math.max(minX, Math.min(maxX, Number.isFinite(nd.x) ? nd.x : w / 2)),
+    y: Math.max(minY, Math.min(maxY, Number.isFinite(nd.y) ? nd.y : hVal / 2)),
+  }));
+}
+
+function placeNewNodes(
+  rawNodes: RawNodeItem[],
+  rawEdges: EdgeItem[],
+  w: number,
+  hVal: number,
+): NodeItem[] {
+  const dragPad = NODE_R + 4;
+  const placePad = Math.min(52, Math.max(NODE_R + 18, Math.min(w, hVal) * 0.14));
+  const clampDragX = (x: number) => Math.max(dragPad, Math.min(Math.max(dragPad, w - dragPad), x));
+  const clampDragY = (y: number) => Math.max(dragPad, Math.min(Math.max(dragPad, hVal - dragPad), y));
+  const clampPlaceX = (x: number) => Math.max(placePad, Math.min(Math.max(placePad, w - placePad), x));
+  const clampPlaceY = (y: number) => Math.max(placePad, Math.min(Math.max(placePad, hVal - placePad), y));
+
+  const adj = new Map<string, string[]>();
+  for (const nd of rawNodes) adj.set(nd.id, []);
+  for (const e of rawEdges) {
+    adj.get(e.from)?.push(e.to);
+    adj.get(e.to)?.push(e.from);
+  }
+
+  const placedMap = new Map<string, { x: number; y: number }>();
+  for (const nd of rawNodes) {
+    if (nd.x != null && nd.y != null && Number.isFinite(nd.x) && Number.isFinite(nd.y)) {
+      placedMap.set(nd.id, { x: clampDragX(nd.x), y: clampDragY(nd.y) });
+    }
+  }
+
+  const step = Math.min(100, Math.max(64, Math.min(w, hVal) * 0.22));
+  const circleRadius = Math.max(44, Math.min(w, hVal) * 0.34);
+
+  for (const nd of rawNodes) {
+    if (placedMap.has(nd.id)) continue;
+
+    const placedValues = [...placedMap.values()];
+    const allCx =
+      placedValues.length > 0
+        ? placedValues.reduce((acc, p) => acc + p.x, 0) / placedValues.length
+        : w / 2;
+    const allCy =
+      placedValues.length > 0
+        ? placedValues.reduce((acc, p) => acc + p.y, 0) / placedValues.length
+        : hVal / 2;
+
+    const placedNeighbors: Array<{ x: number; y: number }> = [];
+    for (const nb of adj.get(nd.id) ?? []) {
+      const p = placedMap.get(nb);
+      if (p) placedNeighbors.push(p);
+    }
+
+    const candidates: Array<{ x: number; y: number }> = [];
+    if (placedNeighbors.length > 0) {
+      const nx = placedNeighbors.reduce((acc, p) => acc + p.x, 0) / placedNeighbors.length;
+      const ny = placedNeighbors.reduce((acc, p) => acc + p.y, 0) / placedNeighbors.length;
+      const dx = nx - allCx;
+      const dy = ny - allCy;
+      const baseAngle = Math.hypot(dx, dy) > 1 ? Math.atan2(dy, dx) : -Math.PI / 2;
+      const count = 12;
+      for (let i = 0; i < count; i++) {
+        const a = baseAngle + (i * 2 * Math.PI) / count;
+        candidates.push({
+          x: clampPlaceX(nx + step * Math.cos(a)),
+          y: clampPlaceY(ny + step * Math.sin(a)),
+        });
+      }
+    } else {
+      const count = 16;
+      for (let i = 0; i < count; i++) {
+        const a = (i * 2 * Math.PI) / count - Math.PI / 2;
+        candidates.push({
+          x: clampPlaceX(w / 2 + circleRadius * Math.cos(a)),
+          y: clampPlaceY(hVal / 2 + circleRadius * Math.sin(a)),
+        });
+      }
+    }
+
+    let best = candidates[0] ?? { x: w / 2, y: hVal / 2 };
+    let bestScore = -1;
+    for (const c of candidates) {
+      let minDist = Infinity;
+      for (const p of placedValues) {
+        const d = Math.hypot(c.x - p.x, c.y - p.y);
+        if (d < minDist) minDist = d;
+      }
+      const score = Number.isFinite(minDist) ? minDist : Infinity;
+      if (score > bestScore) {
+        bestScore = score;
+        best = c;
+      }
+    }
+
+    placedMap.set(nd.id, best);
+  }
+
+  return rawNodes.map((nd) => {
+    const p = placedMap.get(nd.id) ?? { x: w / 2, y: hVal / 2 };
+    return { id: nd.id, label: nd.label, x: p.x, y: p.y, color: nd.color };
+  });
+}
+
 function layoutNodes(
   rawNodes: RawNodeItem[],
   rawEdges: EdgeItem[],
@@ -416,10 +528,15 @@ export function render() {
 
     const sz = canvasSize();
     const rawList = [...nodeMap.values()];
-    const needsLayout = !keepPositions || rawList.some((nd) => nd.x == null || nd.y == null);
-    const placed = needsLayout
-      ? layoutNodes(rawList, parsedEdges, layoutMode(), sz.width, sz.height)
-      : clampNodesToBounds(rawList as NodeItem[], sz.width, sz.height);
+    const hasExisting = keepPositions && prevPos.size > 0;
+    let placed: NodeItem[];
+    if (!hasExisting) {
+      placed = layoutNodes(rawList, parsedEdges, layoutMode(), sz.width, sz.height);
+    } else if (rawList.some((nd) => nd.x == null || nd.y == null)) {
+      placed = placeNewNodes(rawList, parsedEdges, sz.width, sz.height);
+    } else {
+      placed = clampNodesToDragBounds(rawList as NodeItem[], sz.width, sz.height);
+    }
     nodes.set(placed);
     edges.set(parsedEdges);
   }
