@@ -28,3 +28,14 @@ download_url = "https://github.com/lihaoze123/xcpc-plugin-codesnap/releases/down
 sha256 = "0ae5da2e74313dec0578fc8f49e0facba3a77c38582951d7b66712721a8b4639"
 capabilities = ["tool", "commands"]
 has_ui = true
+
+[[plugin]]
+id = "profile-card"
+name = "选手名片"
+version = "0.1.0"
+description = "生成精致段位色 Codeforces / AtCoder 社交分享名片图片，支持任意 Handle 与已绑定账号一键填入、剪贴板复制与高清 PNG 导出"
+repo = "https://github.com/lihaoze123/xcpc-plugin-profile-card"
+download_url = "https://github.com/lihaoze123/xcpc-plugin-profile-card/releases/download/v0.1.0/profile-card-0.1.0.zip"
+sha256 = "00deed32813a2d2beea2adfc09c102f155cc5b326efbfb8bf4c9196e350511de"
+capabilities = ["tool", "commands"]
+has_ui = true
