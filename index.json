@@ -27,7 +27,7 @@
       "version": "1.0.0",
       "description": "画图、拖拽、导出图片",
       "download_url": "https://github.com/lihaoze123/xcpc-plugins/releases/latest/download/graph-editor-1.0.0.zip",
-      "sha256": "a7389bcbb820d26b87a2a4055271e34810cc66091434f96458e44a571512a8bc",
+      "sha256": "a2d16b14895f1961af2b0f7ba3b484f5e0eb27984a08582885e6c8f77e08d26c",
       "capabilities": [
         "tool",
         "commands"
@@ -48,7 +48,7 @@
       "version": "1.0.0",
       "description": "64 位进制翻转、数论计算与常用模数速查",
       "download_url": "https://github.com/lihaoze123/xcpc-plugins/releases/latest/download/math-bitwise-1.0.0.zip",
-      "sha256": "97a258a55959dd08c9a8c8a5c33f65fd6061a623a96783894bf63993299b0dc2",
+      "sha256": "9e1a7456e1b783431553c549561333dc84be635e32a62f5d85162525e02a5275",
       "capabilities": [
         "tool",
         "commands"

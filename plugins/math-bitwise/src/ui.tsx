@@ -49,7 +49,6 @@ export function render() {
   const bitValue = signal<bigint>(initialBig);
   const rawInput = signal<string>(savedRaw);
   const parseError = signal<string>("");
-  const moreMenuOpen = signal<boolean>(false);
 
   const ntN = signal<string>(storage.get<string>("ntN") ?? "998244353");
   const ntA = signal<string>(storage.get<string>("ntA") ?? "3");
@@ -253,16 +252,28 @@ export function render() {
             >
               复制十六进制
             </ui.Button>
-            <ui.Button
-              testID="math-bit-more"
-              variant="outline"
-              size="sm"
-              icon="ellipsis"
-              style={() => ({
-                borderColor: moreMenuOpen() ? token("input") : token("border"),
-                backgroundColor: moreMenuOpen() ? token("accent") : token("card"),
-              })}
-              onPress={() => moreMenuOpen.set(!moreMenuOpen())}
+            <ui.Menu
+              align="end"
+              minWidth={130}
+              items={[
+                { id: "all-ones", label: "全 1 (~0)" },
+                { id: "shl", label: "左移 << 1" },
+                { id: "shr", label: "右移 >> 1" },
+              ]}
+              onSelect={(id) => {
+                if (id === "all-ones") setU64(MASK64);
+                else if (id === "shl") setU64(bitValue() << 1n);
+                else if (id === "shr") setU64(bitValue() >> 1n);
+              }}
+              trigger={
+                <ui.Button
+                  testID="math-bit-more"
+                  variant="outline"
+                  size="sm"
+                  icon="ellipsis"
+                  tooltip="更多位运算"
+                />
+              }
             />
           </ui.Row>
           <ui.View style={{ height: 18, justifyContent: "center" }}>
@@ -298,81 +309,6 @@ export function render() {
             </ui.Row>
           ))}
         </ui.Card>
-
-        <ui.If when={moreMenuOpen}>
-          {() => (
-            <ui.View
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                zIndex: 10,
-              }}
-            >
-              <ui.View
-                testID="math-bit-more-backdrop"
-                onPress={() => moreMenuOpen.set(false)}
-                style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
-              />
-              <ui.Row
-                testID="math-bit-more-menu"
-                align="center"
-                gap={4}
-                style={{
-                  position: "absolute",
-                  top: 36,
-                  right: 0,
-                  zIndex: 20,
-                  padding: 6,
-                  borderRadius: 8,
-                  borderWidth: 1,
-                  borderColor: token("border"),
-                  backgroundColor: token("popover"),
-                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.12)",
-                }}
-              >
-                <ui.Button
-                  testID="math-bit-all-ones"
-                  variant="ghost"
-                  size="sm"
-                  style={{ borderRadius: 4 }}
-                  onPress={() => {
-                    setU64(MASK64);
-                    moreMenuOpen.set(false);
-                  }}
-                >
-                  全 1
-                </ui.Button>
-                <ui.Button
-                  testID="math-bit-shl"
-                  variant="ghost"
-                  size="sm"
-                  style={{ borderRadius: 4 }}
-                  onPress={() => {
-                    setU64(bitValue() << 1n);
-                    moreMenuOpen.set(false);
-                  }}
-                >
-                  {"<< 1"}
-                </ui.Button>
-                <ui.Button
-                  testID="math-bit-shr"
-                  variant="ghost"
-                  size="sm"
-                  style={{ borderRadius: 4 }}
-                  onPress={() => {
-                    setU64(bitValue() >> 1n);
-                    moreMenuOpen.set(false);
-                  }}
-                >
-                  {">> 1"}
-                </ui.Button>
-              </ui.Row>
-            </ui.View>
-          )}
-        </ui.If>
       </ui.Col>
     );
   };
@@ -481,7 +417,6 @@ export function render() {
           value={activeTab}
           itemWidth={86}
           onChange={(tab) => {
-            moreMenuOpen.set(false);
             activeTab.set(tab);
             storage.set("activeTab", tab);
           }}
