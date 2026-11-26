@@ -21,11 +21,11 @@
 [[plugin]]
 id = "codesnap"
 name = "CodeSnap 代码截图"
-version = "0.1.0"
+version = "0.2.0"
 description = "以原版 CodeSnap 风格生成高清代码截图，支持多配色主题、渐变/透明背景与一键复制 PNG"
 repo = "https://github.com/lihaoze123/xcpc-plugin-codesnap"
-download_url = "https://github.com/lihaoze123/xcpc-plugin-codesnap/releases/download/v0.1.0/codesnap-0.1.0.zip"
-sha256 = "0ae5da2e74313dec0578fc8f49e0facba3a77c38582951d7b66712721a8b4639"
+download_url = "https://github.com/lihaoze123/xcpc-plugin-codesnap/releases/download/v0.2.0/codesnap-0.2.0.zip"
+sha256 = "f180a104c6bf876a8412ea1d88648e31d141147e2365f4ddfa4ba43b3a914890"
 capabilities = ["tool", "commands"]
 has_ui = true
 

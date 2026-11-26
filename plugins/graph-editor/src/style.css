@@ -13,8 +13,8 @@
   --destructive: var(--xcpc-destructive, #b91c1c);
   --hud-bg: rgba(255, 255, 255, 0.84);
   --hud-shadow: 0 4px 16px rgba(9, 9, 11, 0.08), 0 1px 2px rgba(9, 9, 11, 0.05);
-  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  --sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Noto Sans CJK SC", sans-serif;
+  --mono: var(--xcpc-font-mono, "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace);
+  --sans: var(--xcpc-font-sans, "Inter", "Noto Sans CJK SC", "Microsoft YaHei UI", "Microsoft YaHei", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", sans-serif);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -555,7 +555,10 @@ body {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
+  width: max-content;
+  max-width: calc(100% - 24px);
   display: flex;
+  flex-wrap: nowrap;
   align-items: center;
   gap: 4px;
   padding: 4px 6px;
@@ -595,6 +598,8 @@ body {
   font-size: 11.5px;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -622,6 +627,7 @@ body {
   appearance: none;
   width: 18px;
   height: 18px;
+  flex-shrink: 0;
   border-radius: 50%;
   border: 2px solid transparent;
   padding: 0;
@@ -903,4 +909,23 @@ body {
   border-radius: 7px;
   background: var(--bg);
   border: 1px solid var(--border);
+}
+
+@media (max-width: 960px) {
+  .sidebar {
+    width: 216px;
+    padding: 8px;
+  }
+  .inspector {
+    width: 210px;
+  }
+}
+
+@media (max-width: 780px) {
+  .sidebar {
+    width: 196px;
+  }
+  .inspector {
+    width: 196px;
+  }
 }

@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../node_modules/@xcpc/plugin-sdk/manifest.schema.json
 id = "graph-editor"
 name = "图论与几何画板"
-version = "2.0.0"
+version = "2.0.1"
 description = "实时物理图论与计算几何画板，支持多用例、重边自环、经典算法高亮与出版级出图"
 author = "XCPC Workstation"
 entry = "index.js"

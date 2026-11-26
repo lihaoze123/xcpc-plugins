@@ -2088,6 +2088,9 @@ async function mount() {
   }
   syncAllUI();
   requestFrame();
+  if (typeof document.fonts?.ready?.then === "function") {
+    void document.fonts.ready.then(() => requestFrame());
+  }
 }
 
 if (document.readyState === "loading") {
