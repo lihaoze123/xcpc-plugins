@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../../node_modules/@xcpc/plugin-sdk/manifest.schema.json
+# yaml-language-server: $schema=../../node_modules/@xcpc-workstation/plugin-sdk/manifest.schema.json
 id = "complexity-mem"
 name = "复杂度与内存估算"
 version = "1.0.0"

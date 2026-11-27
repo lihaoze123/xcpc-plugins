@@ -44,7 +44,7 @@ jobs:
           node -e '
             const fs = require("fs");
             const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
-            pkg.devDependencies["@xcpc/plugin-sdk"] = "file:../xcpc-workstation/packages/plugin-sdk";
+            pkg.devDependencies["@xcpc-workstation/plugin-sdk"] = "file:../xcpc-workstation/packages/plugin-sdk";
             fs.writeFileSync("package.json", JSON.stringify(pkg, null, 2) + "\n");
           '
           npm install
@@ -60,7 +60,7 @@ jobs:
           BASE_URL: https://github.com/lihaoze123/xcpc-plugins/releases/download/official-latest
         run: node scripts/build-index.mjs --write-root
 
-      - name: Pack @xcpc/plugin-sdk tarball
+      - name: Pack @xcpc-workstation/plugin-sdk tarball
         working-directory: xcpc-workstation/packages/plugin-sdk
         run: |
           mkdir -p "${{ github.workspace }}/xcpc-plugins/dist-repo"

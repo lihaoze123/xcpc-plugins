@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../../node_modules/@xcpc/plugin-sdk/manifest.schema.json
+# yaml-language-server: $schema=../../node_modules/@xcpc-workstation/plugin-sdk/manifest.schema.json
 id = "string-lab"
 name = "字符串算法调试器"
 version = "1.0.0"

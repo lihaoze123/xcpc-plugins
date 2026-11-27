@@ -4,7 +4,7 @@ Official offline tool plugins and community plugin registry (`index.json`) for [
 
 ## Official Tool Plugins
 
-All official tool plugins are built with `@xcpc/plugin-sdk` + Vite + TypeScript. Custom UI tools bundle into a single self-contained pure-Web `ui.html` rendered inside XCPC Workstation's sandboxed `<WebView>`, while headless tools run purely in the QuickJS sandbox (`index.js`):
+All official tool plugins are built with `@xcpc-workstation/plugin-sdk` + Vite + TypeScript. Custom UI tools bundle into a single self-contained pure-Web `ui.html` rendered inside XCPC Workstation's sandboxed `<WebView>`, while headless tools run purely in the QuickJS sandbox (`index.js`):
 
 - **`graph-editor`** — 图论与几何画板（pure-Web `ui.html` 交互画布 + `index.js` 后端，边表/父数组/邻接表/坐标双向联动、拖拽与多种布局、SVG/PNG 导出）
 - **`math-bitwise`** — 数论与位运算工作台（pure-Web `ui.html` 交互界面 + `index.js` 后端，64 位按位翻转、质因数分解、gcd/exgcd、快速幂/模逆元、CRT、常用模数速查）

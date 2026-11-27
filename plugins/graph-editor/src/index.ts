@@ -3,7 +3,7 @@ import type {
   GraphNode,
   PluginCommandAction,
   ToolExecutionResult,
-} from "@xcpc/plugin-sdk/host";
+} from "@xcpc-workstation/plugin-sdk/host";
 import { parseGraphText } from "./parser";
 import {
   applyBipartiteLayout,

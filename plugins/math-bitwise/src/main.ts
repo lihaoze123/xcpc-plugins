@@ -1,5 +1,5 @@
 import "./style.css";
-import type { XcpcBridge, XcpcTheme } from "@xcpc/plugin-sdk/ui";
+import type { XcpcBridge, XcpcTheme } from "@xcpc-workstation/plugin-sdk/ui";
 
 function getBridge(): XcpcBridge | undefined {
   return window.xcpc;

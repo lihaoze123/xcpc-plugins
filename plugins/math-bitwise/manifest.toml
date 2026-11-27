@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../../node_modules/@xcpc/plugin-sdk/manifest.schema.json
+# yaml-language-server: $schema=../../node_modules/@xcpc-workstation/plugin-sdk/manifest.schema.json
 id = "math-bitwise"
 name = "数论与位运算工作台"
 version = "1.0.0"
