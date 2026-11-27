@@ -2,7 +2,7 @@ import type {
   PluginCommandAction,
   ToolExecutionResult,
   ToolOutputBlock,
-} from "@xcpc/plugin-sdk/host";
+} from "@xcpc-workstation/plugin-sdk/host";
 
 const MASK64 = (1n << 64n) - 1n;
 const SIGN64 = 1n << 63n;

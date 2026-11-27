@@ -9,7 +9,7 @@
     "typecheck": "tsc -p plugins/complexity-mem/tsconfig.json --noEmit && tsc -p plugins/string-lab/tsconfig.json --noEmit && tsc -p plugins/math-bitwise/tsconfig.json --noEmit && tsc -p plugins/graph-editor/tsconfig.json --noEmit"
   },
   "devDependencies": {
-    "@xcpc/plugin-sdk": "file:../2026-11-19-statement/packages/plugin-sdk",
+    "@xcpc-workstation/plugin-sdk": "file:../2026-11-19-statement/packages/plugin-sdk",
     "typescript": "^5.7.0",
     "vite": "^6.0.0"
   }

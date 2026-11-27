@@ -1,4 +1,4 @@
-import type { ToolExecutionResult, ToolOutputBlock } from "@xcpc/plugin-sdk/host";
+import type { ToolExecutionResult, ToolOutputBlock } from "@xcpc-workstation/plugin-sdk/host";
 
 function computePrefixFunction(s: string): number[] {
   const n = s.length;

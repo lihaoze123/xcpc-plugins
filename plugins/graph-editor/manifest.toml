@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../../node_modules/@xcpc/plugin-sdk/manifest.schema.json
+# yaml-language-server: $schema=../../node_modules/@xcpc-workstation/plugin-sdk/manifest.schema.json
 id = "graph-editor"
 name = "图论与几何画板"
 version = "2.0.0"

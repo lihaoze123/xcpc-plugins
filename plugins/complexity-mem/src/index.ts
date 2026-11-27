@@ -1,4 +1,4 @@
-import type { ToolExecutionResult } from "@xcpc/plugin-sdk/host";
+import type { ToolExecutionResult } from "@xcpc-workstation/plugin-sdk/host";
 
 const TYPE_SIZES: Record<string, number> = {
   bool: 1,
