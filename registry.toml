@@ -32,10 +32,10 @@ has_ui = true
 [[plugin]]
 id = "profile-card"
 name = "选手名片"
-version = "0.2.0"
-description = "生成精致段位色 Codeforces / AtCoder 社交分享名片，支持桌面端高清 PNG 与无头 CLI / GitHub Actions 矢量 SVG 导出"
+version = "0.3.0"
+description = "生成精致段位色 Codeforces / AtCoder 社交分享名片与 Rating 徽章，支持桌面端高清 PNG 与无头 CLI / GitHub Actions 矢量 SVG 导出"
 repo = "https://github.com/lihaoze123/xcpc-plugin-profile-card"
-download_url = "https://github.com/lihaoze123/xcpc-plugin-profile-card/releases/download/v0.2.0/profile-card-0.2.0.zip"
-sha256 = "031ee9e83af3da0483df0876a30b59571057b3048fdea68fca3e8ffc2db7acc9"
+download_url = "https://github.com/lihaoze123/xcpc-plugin-profile-card/releases/download/v0.3.0/profile-card-0.3.0.zip"
+sha256 = "b607dd4f87db2d1df0905337a2f1f96cb3c33cfe415f23c8023411506440544f"
 capabilities = ["tool", "commands"]
 has_ui = true
