@@ -1,0 +1,8 @@
+title = "序列分段代价"
+rating = 2200
+tags = ["dp", "convex-hull-trick", "monotonic-queue"]
+author = "XCPC 命题组"
+
+[limits]
+time = "1s"
+memory = "512MB"

@@ -7,7 +7,7 @@
       "version": "1.0.0",
       "description": "估算时间复杂度与数组内存占用",
       "download_url": "https://github.com/lihaoze123/xcpc-plugins/releases/download/official-latest/complexity-mem-1.0.0.zip",
-      "sha256": "024ead356797d883ca657999365a405a2ea4debf0aae5b0625b1f754a1d53755",
+      "sha256": "0d17b7ca1454316ebd0fce13e7be3f7531e34340ae310308d93334219305af21",
       "capabilities": [
         "tool"
       ],
@@ -21,12 +21,31 @@
       }
     },
     {
+      "id": "editorial-slides",
+      "name": "Editorial Slides",
+      "version": "0.1.0",
+      "description": "Beamer Warsaw editorial presentation template built with Touying, pinit, mannot, and CeTZ.",
+      "download_url": "https://github.com/lihaoze123/xcpc-plugins/releases/download/official-latest/editorial-slides-0.1.0.zip",
+      "sha256": "cc6710160762b94af60544138477c1707e14047c9d28edb682448ffc3aa67f00",
+      "capabilities": [
+        "template"
+      ],
+      "has_ui": false,
+      "official": true,
+      "permissions": {
+        "plugin_id": "editorial-slides",
+        "domains": [],
+        "credentials": [],
+        "workspace_read": false
+      }
+    },
+    {
       "id": "graph-editor",
       "name": "图论与几何画板",
-      "version": "1.0.0",
-      "description": "画图、拖拽、导出图片",
-      "download_url": "https://github.com/lihaoze123/xcpc-plugins/releases/download/official-latest/graph-editor-1.0.0.zip",
-      "sha256": "485804d3f36e0e487c57c18c458517a121057b4ea489fc33307507a591d8469e",
+      "version": "2.0.0",
+      "description": "实时物理图论与计算几何画板，支持多用例、重边自环、经典算法高亮与出版级出图",
+      "download_url": "https://github.com/lihaoze123/xcpc-plugins/releases/download/official-latest/graph-editor-2.0.0.zip",
+      "sha256": "4616f22c56baf4e79861fc9b97eedcf4836fcbe1f0c6d227d1e4508169725a62",
       "capabilities": [
         "tool",
         "commands"
@@ -46,7 +65,7 @@
       "version": "1.0.0",
       "description": "位运算、进制转换与常用数论工具",
       "download_url": "https://github.com/lihaoze123/xcpc-plugins/releases/download/official-latest/math-bitwise-1.0.0.zip",
-      "sha256": "95f459b9d1713b79d6572b273ecbaa6a6a184ad33e96a38508cc847825c75b33",
+      "sha256": "9148e5ab711e118ba155d7600212c399a5aaaed4fdae5bfb7d2422d45ed55259",
       "capabilities": [
         "tool",
         "commands"
@@ -66,7 +85,7 @@
       "version": "1.0.0",
       "description": "调试前缀函数、Z 函数与回文串算法",
       "download_url": "https://github.com/lihaoze123/xcpc-plugins/releases/download/official-latest/string-lab-1.0.0.zip",
-      "sha256": "8a9cb52a732d359324241a1e66bd67cb1d4b82135e10d7d777dea43f6d64081b",
+      "sha256": "96376a7d2667f3d0f85ea6025c2a9f8e17f729301f91bedabbeea771ee897128",
       "capabilities": [
         "tool"
       ],

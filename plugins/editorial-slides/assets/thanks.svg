@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 120" width="420" height="120">
+  <defs>
+    <linearGradient id="ink" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#09090B"/>
+      <stop offset="100%" stop-color="#18181B"/>
+    </linearGradient>
+  </defs>
+  <g fill="none" stroke="url(#ink)" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Elegant calligraphic flourish underline -->
+    <path d="M 48 94 C 130 86, 285 84, 368 91" stroke="#0B6989" stroke-width="2.2" opacity="0.65"/>
+    <path d="M 118 102 C 175 97, 245 97, 302 101" stroke="#0B6989" stroke-width="1.2" opacity="0.35"/>
+  </g>
+  <text x="210" y="76" text-anchor="middle"
+        font-family="'Snell Roundhand', 'Brush Script MT', 'Apple Chancery', 'URW Chancery L', 'Segoe Script', 'Latin Modern Roman', Georgia, serif"
+        font-style="italic" font-weight="400" font-size="74" letter-spacing="1.5"
+        fill="url(#ink)">Thanks!</text>
+</svg>
