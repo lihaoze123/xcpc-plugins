@@ -1,0 +1,14 @@
+id = "editorial-slides"
+name = "Editorial Slides"
+version = "0.1.0"
+description = "Beamer Warsaw editorial presentation template built with Touying, pinit, mannot, and CeTZ."
+author = "XCPC Workstation"
+homepage = "https://github.com/lihaoze123/xcpc-plugins"
+capabilities = ["template"]
+
+[[templates]]
+id = "warsaw"
+entry = "templates/warsaw.typ"
+kind = "editorial"
+name = "Beamer Warsaw 题解演示文稿"
+description = "基于 Touying 0.8 的 Beamer Warsaw 风格题解演示模板，支持分步动画、pinit 锚点标注与 CeTZ 矢量图解。"

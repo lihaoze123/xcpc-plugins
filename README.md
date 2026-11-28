@@ -11,6 +11,12 @@ All official tool plugins are built with `@xcpc-workstation/plugin-sdk` + Vite +
 - **`complexity-mem`** — 复杂度与内存估算（无头表单工具，时间复杂度运算量安全边界与多维数组精确 MiB 估算）
 - **`string-lab`** — 字符串算法调试器（无头表单工具，KMP 前缀函数、Z 函数、Manacher 回文半径、后缀数组 SA / LCP）
 
+## Official Template Plugins
+
+Pure Typst typesetting template plugins (`capabilities = ["template"]`, zero JS, no trust prompt required):
+
+- **`editorial-slides`** — Beamer Warsaw 风格题解演示文稿模板（`plugin:editorial-slides/warsaw`，基于 Touying 0.8 + `pinit` + `mannot` + `CeTZ`，支持分步动画、讲义模式与公式/代码锚点标注）
+
 ## Local Build & Packaging
 
 ```bash

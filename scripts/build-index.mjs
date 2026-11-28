@@ -383,12 +383,22 @@ async function main() {
     const manifestPath = path.join(pluginDir, "manifest.toml");
     if (!fs.existsSync(manifestPath)) continue;
 
-    console.log(`\n[build] ${dirName}`);
-    execFileSync(viteBin, ["build"], { cwd: pluginDir, stdio: "inherit" });
+    const needsViteBuild =
+      fs.existsSync(path.join(pluginDir, "vite.config.ts")) ||
+      fs.existsSync(path.join(pluginDir, "vite.config.js")) ||
+      fs.existsSync(path.join(pluginDir, "vite.config.mjs"));
 
-    const distDir = path.join(pluginDir, "dist");
+    let packSourceDir = pluginDir;
+    if (needsViteBuild) {
+      console.log(`\n[build] ${dirName}`);
+      execFileSync(viteBin, ["build"], { cwd: pluginDir, stdio: "inherit" });
+      packSourceDir = path.join(pluginDir, "dist");
+    } else {
+      console.log(`\n[zero-build] ${dirName}`);
+    }
+
     console.log(`[check] ${dirName}`);
-    const checkRaw = execFileSync(xcpcBin, ["plugin", "check", distDir, "--json"], {
+    const checkRaw = execFileSync(xcpcBin, ["plugin", "check", packSourceDir, "--json"], {
       encoding: "utf8",
     });
     const checkReport = JSON.parse(checkRaw);
@@ -402,7 +412,7 @@ async function main() {
     console.log(`[pack]  ${dirName} -> ${zipName}`);
     const packRaw = execFileSync(
       xcpcBin,
-      ["plugin", "pack", distDir, "-o", zipPath, "--json"],
+      ["plugin", "pack", packSourceDir, "-o", zipPath, "--json"],
       { encoding: "utf8" },
     );
     const packReport = JSON.parse(packRaw);

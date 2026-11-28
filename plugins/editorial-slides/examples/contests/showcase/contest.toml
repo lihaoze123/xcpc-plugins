@@ -1,0 +1,21 @@
+name = "2026 XCPC 区域赛"
+date = "2026 年 11 月"
+author = "XCPC 命题组"
+language = "chinese"
+editorial-template = "plugin:editorial-slides/warsaw"
+
+[template-options."plugin:editorial-slides/warsaw"]
+aspect-ratio = "16-9"
+accent-color = "#0B6989"
+subtitle = "命题报告"
+body-size = "16pt"
+show-slide-number = true
+show-thanks = true
+
+[[problem]]
+id = "tree-beacon"
+label = "A"
+
+[[problem]]
+id = "slope-partition"
+label = "B"

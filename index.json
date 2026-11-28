@@ -7,7 +7,7 @@
       "version": "1.0.0",
       "description": "估算时间复杂度与数组内存占用",
       "download_url": "https://github.com/lihaoze123/xcpc-plugins/releases/download/official-latest/complexity-mem-1.0.0.zip",
-      "sha256": "024ead356797d883ca657999365a405a2ea4debf0aae5b0625b1f754a1d53755",
+      "sha256": "0d17b7ca1454316ebd0fce13e7be3f7531e34340ae310308d93334219305af21",
       "capabilities": [
         "tool"
       ],
@@ -21,12 +21,31 @@
       }
     },
     {
+      "id": "editorial-slides",
+      "name": "Editorial Slides",
+      "version": "0.1.0",
+      "description": "Beamer Warsaw editorial presentation template built with Touying, pinit, mannot, and CeTZ.",
+      "download_url": "https://github.com/lihaoze123/xcpc-plugins/releases/download/official-latest/editorial-slides-0.1.0.zip",
+      "sha256": "cc6710160762b94af60544138477c1707e14047c9d28edb682448ffc3aa67f00",
+      "capabilities": [
+        "template"
+      ],
+      "has_ui": false,
+      "official": true,
+      "permissions": {
+        "plugin_id": "editorial-slides",
+        "domains": [],
+        "credentials": [],
+        "workspace_read": false
+      }
+    },
+    {
       "id": "graph-editor",
       "name": "图论与几何画板",
-      "version": "1.0.0",
-      "description": "画图、拖拽、导出图片",
-      "download_url": "https://github.com/lihaoze123/xcpc-plugins/releases/download/official-latest/graph-editor-1.0.0.zip",
-      "sha256": "485804d3f36e0e487c57c18c458517a121057b4ea489fc33307507a591d8469e",
+      "version": "2.0.1",
+      "description": "实时物理图论与计算几何画板，支持多用例、重边自环、经典算法高亮与出版级出图",
+      "download_url": "https://github.com/lihaoze123/xcpc-plugins/releases/download/official-latest/graph-editor-2.0.1.zip",
+      "sha256": "2a033b5c1ebb1e925f869b9a7c881acdd433580346b559cf34d9f225fc4641ac",
       "capabilities": [
         "tool",
         "commands"
@@ -46,7 +65,7 @@
       "version": "1.0.0",
       "description": "位运算、进制转换与常用数论工具",
       "download_url": "https://github.com/lihaoze123/xcpc-plugins/releases/download/official-latest/math-bitwise-1.0.0.zip",
-      "sha256": "95f459b9d1713b79d6572b273ecbaa6a6a184ad33e96a38508cc847825c75b33",
+      "sha256": "9148e5ab711e118ba155d7600212c399a5aaaed4fdae5bfb7d2422d45ed55259",
       "capabilities": [
         "tool",
         "commands"
@@ -66,7 +85,7 @@
       "version": "1.0.0",
       "description": "调试前缀函数、Z 函数与回文串算法",
       "download_url": "https://github.com/lihaoze123/xcpc-plugins/releases/download/official-latest/string-lab-1.0.0.zip",
-      "sha256": "8a9cb52a732d359324241a1e66bd67cb1d4b82135e10d7d777dea43f6d64081b",
+      "sha256": "96376a7d2667f3d0f85ea6025c2a9f8e17f729301f91bedabbeea771ee897128",
       "capabilities": [
         "tool"
       ],
@@ -75,6 +94,51 @@
       "permissions": {
         "plugin_id": "string-lab",
         "domains": [],
+        "credentials": [],
+        "workspace_read": false
+      }
+    },
+    {
+      "id": "codesnap",
+      "name": "CodeSnap 代码截图",
+      "version": "0.2.0",
+      "description": "以原版 CodeSnap 风格生成高清代码截图，支持多配色主题、渐变/透明背景与一键复制 PNG",
+      "download_url": "https://github.com/lihaoze123/xcpc-plugin-codesnap/releases/download/v0.2.0/codesnap-0.2.0.zip",
+      "sha256": "f180a104c6bf876a8412ea1d88648e31d141147e2365f4ddfa4ba43b3a914890",
+      "capabilities": [
+        "tool",
+        "commands"
+      ],
+      "has_ui": true,
+      "official": false,
+      "permissions": {
+        "plugin_id": "codesnap",
+        "domains": [],
+        "credentials": [],
+        "workspace_read": false
+      }
+    },
+    {
+      "id": "profile-card",
+      "name": "选手名片",
+      "version": "0.2.0",
+      "description": "生成精致段位色 Codeforces / AtCoder 社交分享名片，支持桌面端高清 PNG 与无头 CLI / GitHub Actions 矢量 SVG 导出",
+      "download_url": "https://github.com/lihaoze123/xcpc-plugin-profile-card/releases/download/v0.2.0/profile-card-0.2.0.zip",
+      "sha256": "031ee9e83af3da0483df0876a30b59571057b3048fdea68fca3e8ffc2db7acc9",
+      "capabilities": [
+        "tool",
+        "commands"
+      ],
+      "has_ui": true,
+      "official": false,
+      "permissions": {
+        "plugin_id": "profile-card",
+        "domains": [
+          "codeforces.com",
+          "userpic.codeforces.org",
+          "atcoder.jp",
+          "kenkoooo.com"
+        ],
         "credentials": [],
         "workspace_read": false
       }

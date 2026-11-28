@@ -1,0 +1,8 @@
+title = "树上信标"
+rating = 1900
+tags = ["trees", "dp", "independent-set"]
+author = "XCPC 命题组"
+
+[limits]
+time = "1s"
+memory = "512MB"
